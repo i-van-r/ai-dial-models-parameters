@@ -1,21 +1,53 @@
 from task.app.main import run
 
-# TODO:
-#  Try the `n` parameter with different models (`deployment_name`). With the parameter `n`, we can configure how many
-#       chat completion choices to generate for each input message
-#  User massage: Why is the snow white?
+# List of available models
+models = [
+    'gpt-4o',
+    'claude-3-7-sonnet@20250219',
+    'gemini-2.5-pro'
+]
 
-# Models to try:
-# - gpt-4o
-# - claude-3-7-sonnet@20250219
-# - gemini-2.5-pro
+print("Select a model to run:")
+for idx, model in enumerate(models, 1):
+    print(f"{idx}. {model}")
+
+# Model selection
+try:
+    user_input = input(f"Enter the model number (1-{len(models)}) [default 1]: ").strip()
+    if user_input == "":
+        selected_idx = 1
+    else:
+        selected_idx = int(user_input)
+    if not (1 <= selected_idx <= len(models)):
+        print(f"Invalid selection. Defaulting to: {models[0]}")
+        selected_model = models[0]
+    else:
+        selected_model = models[selected_idx - 1]
+except (ValueError, KeyboardInterrupt):
+    print(f"Invalid input. Defaulting to: {models[0]}")
+    selected_model = models[0]
+
+print(f"Using model: {selected_model}")
+
+# n parameter input
+try:
+    n_input = input("Enter the number of completions to generate (n, 1-5) [default 1]: ").strip()
+    if n_input == "":
+        n_value = 1
+    else:
+        n_value = int(n_input)
+    if not (1 <= n_value <= 5):
+        print("Invalid n value. Defaulting to 1.")
+        n_value = 1
+except (ValueError, KeyboardInterrupt):
+    print("Invalid input. Defaulting n to 1.")
+    n_value = 1
+
+print(f"Using n = {n_value}")
 
 run(
-    # TODO:
-    #  1. Provide `deployment_name` with model from the list above👆
-    #  2. Use `n` parameter with value in range from 1 to 5!
+    deployment_name=selected_model,
+    print_request=False,
+    print_only_content=True,
+    n=n_value
 )
-
-# Pay attention to the number of choices in the response!
-# If you have worked with ChatGPT, you have probably seen responses where ChatGPT offers you a choice between two
-# responses to select which one you prefer. This is done with the `n` parameter.
