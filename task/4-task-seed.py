@@ -1,21 +1,33 @@
 from task.app.main import run
+from task.util.llm_functions import LlmModelSelection
 
-# TODO:
-#  Try the `seed` parameter:
-#       It allows us to reduce entropy by making the model's output more deterministic.
-#       There's no universally "best" seed - any integer works fine. Common approaches:
-#            - For testing: Use simple values like 42, 123, or 1000
-#       Default: None or random unless specified on the LLM side
-#  User massage: Name a random animal
+selector = LlmModelSelection()
+selected_model = selector.select_model()
+print(f"Using model: {selected_model}")
 
-run(
-    deployment_name='gpt-4o',
-    # TODO:
-    #  1. Use `seed` parameter with value 42 (or whatever you want)
-    #  2. Use `n` parameter with value 5
+print(
+    "\nThe 'seed' parameter makes the model's output more deterministic (less random).\n"
+    "If you use the same seed and prompt, you should get the same result each time.\n"
+    "Common seeds: 42, 123, 1000. Default is None (random).\n"
+    "Note: For Anthropic and Gemini models, this parameter will be ignored.\n"
 )
 
-# Check the content in choices. The expected result is that in almost all choices the result will be the same.
-# If you restart the app and retry, it should be mostly the same.
-# Also, try it without `seed` parameter.
-# For Anthropic and Gemini this parameter will be ignored
+try:
+    seed_input = input("Enter a seed value (integer) [default 42]: ").strip()
+    if seed_input == "":
+        seed_value = 42
+    else:
+        seed_value = int(seed_input)
+except (ValueError, KeyboardInterrupt):
+    print("\nInvalid input. Defaulting seed to 42.")
+    seed_value = 42
+
+print(f"Using seed = {seed_value}")
+print("n is set to 5 (number of completions per request)")
+
+run(
+    deployment_name=selected_model,
+    print_only_content=True,
+    seed=seed_value,
+    n=5
+)
