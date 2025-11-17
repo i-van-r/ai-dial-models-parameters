@@ -1,31 +1,8 @@
 from task.app.main import run
+from task.util.llm_functions import LlmModelSelection
 
-# List of available models
-models = [
-    'gpt-4o',
-    'claude-3-7-sonnet@20250219',
-    'gemini-2.5-pro'
-]
-
-print("Select a model to run:")
-for idx, model in enumerate(models, 1):
-    print(f"{idx}. {model}")
-
-# Model selection
-try:
-    user_input = input(f"Enter the model number (1-{len(models)}) [default 1]: ").strip()
-    if user_input == "":
-        selected_idx = 1
-    else:
-        selected_idx = int(user_input)
-    if not (1 <= selected_idx <= len(models)):
-        print(f"Invalid selection. Defaulting to: {models[0]}")
-        selected_model = models[0]
-    else:
-        selected_model = models[selected_idx - 1]
-except (ValueError, KeyboardInterrupt):
-    print(f"Invalid input. Defaulting to: {models[0]}")
-    selected_model = models[0]
+llmSelector = LlmModelSelection()
+selected_model = llmSelector.select_model()
 
 print(f"Using model: {selected_model}")
 
